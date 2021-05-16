@@ -2,11 +2,16 @@
 
 namespace Statamic\Eloquent\Entries;
 
+use Illuminate\Support\Carbon;
 use Statamic\Eloquent\Entries\EntryModel as Model;
 use Statamic\Entries\Entry as FileEntry;
+use Statamic\Eloquent\Revisions\Revisable;
+use Statamic\Support\Arr;
 
 class Entry extends FileEntry
 {
+    use Revisable;
+
     protected $model;
 
     public static function fromModel(Model $model)
@@ -90,5 +95,27 @@ class Entry extends FileEntry
     public function hasOrigin()
     {
         return $this->originId() !== null;
+    }
+
+    public function makeFromRevision($revision)
+    {
+        $entry = clone $this;
+
+        if (! $revision) {
+            return $entry;
+        }
+
+        $attrs = $revision->attributes();
+
+        $entry
+            ->published($attrs['published'])
+            ->data($attrs['data'])
+            ->slug($attrs['slug']);
+
+        if ($this->collection()->dated() && ($date = Arr::get($attrs, 'date'))) {
+            $entry->date(Carbon::createFromTimestamp($date));
+        }
+
+        return $entry;
     }
 }
