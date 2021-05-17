@@ -24,14 +24,10 @@ class EntryRevisionsController extends CpController
         });
 
         // The first non manually created revision would be considered the "current"
-        // version. It's what corresponds to what's in the content directory.
+        // version.
         optional($revisionCollection->first(function ($revision) {
             return $revision->action() != 'revision';
         }))->attribute('current', true);
-
-        optional($revisionCollection->first(function ($revision) {
-            return $revision->action() == 'revision';
-        }))->attribute('working', true);
 
         $results = $revisionCollection->groupBy(function ($revision) {
             return $revision->date()->clone()->startOfDay()->format('U');
@@ -110,18 +106,6 @@ class EntryRevisionsController extends CpController
                 ];
             })->all(),
         ];
-    }
-
-    protected function workingCopy($entry)
-    {
-        if ($entry->published()) {
-            return $entry->workingCopy();
-        }
-
-        return $entry
-            ->makeWorkingCopy()
-            ->date($entry->lastModified())
-            ->user($entry->lastModifiedBy());
     }
 
     protected function collectionToArray($collection)

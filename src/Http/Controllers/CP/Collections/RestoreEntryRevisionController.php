@@ -15,8 +15,6 @@ class RestoreEntryRevisionController extends CpController
     public function __invoke(Request $request, $collection, $entry)
     {
         $date = Carbon::parse($request->revision);
-        $dateTime = $date->toDateTimeString();
-
         $revisionModel = RevisionModel::where('date', $date)->first();
 
         if (! $target = $entry->revision($revisionModel->id)) {
@@ -46,9 +44,8 @@ class RestoreEntryRevisionController extends CpController
     {
         $target->date(now())->save();
         $date = Carbon::parse($target->date());
-        $dateTime = $date->toDateTimeString();
 
-        $revision = RevisionModel::where('date', $date)
+        RevisionModel::where('date', $date)
             ->update([
                 'key' => $entry->id(),
                 'action' => $target->action()
