@@ -6,11 +6,12 @@ use Statamic\Contracts\Entries\CollectionRepository as CollectionRepositoryContr
 use Statamic\Contracts\Entries\EntryRepository as EntryRepositoryContract;
 use Statamic\Eloquent\Commands\ImportEntries;
 use Statamic\Eloquent\Entries\CollectionRepository;
-use Statamic\Eloquent\Entries\EntryModel;
 use Statamic\Eloquent\Entries\EntryQueryBuilder;
 use Statamic\Eloquent\Entries\EntryRepository;
+use Statamic\Eloquent\Revisions\RevisionRepository;
 use Statamic\Providers\AddonServiceProvider;
 use Statamic\Statamic;
+use function Couchbase\defaultDecoder;
 
 class ServiceProvider extends AddonServiceProvider
 {
@@ -48,5 +49,19 @@ class ServiceProvider extends AddonServiceProvider
         $this->app->bind('statamic.eloquent.entries.model', function () {
             return config('statamic-eloquent-driver.entries.model');
         });
+
+        $this->app->bind(\Statamic\Revisions\RevisionRepository::class, function () {
+            return new RevisionRepository;
+        });
+
+        $this->app->singleton(
+            \Statamic\Http\Controllers\CP\Collections\EntryRevisionsController::class,
+            \Statamic\Eloquent\Http\Controllers\CP\Collections\EntryRevisionsController::class
+        );
+
+        $this->app->singleton(
+            \Statamic\Http\Controllers\CP\Collections\RestoreEntryRevisionController::class,
+            \Statamic\Eloquent\Http\Controllers\CP\Collections\RestoreEntryRevisionController::class
+        );
     }
 }
