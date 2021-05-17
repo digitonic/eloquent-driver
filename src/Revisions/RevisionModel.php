@@ -12,7 +12,6 @@ class RevisionModel extends Eloquent
 
     protected $casts = [
         'date' => 'datetime',
-        'working' => 'bool',
         'attributes' => 'json',
     ];
 }

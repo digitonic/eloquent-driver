@@ -15,11 +15,6 @@ use Statamic\Revisions\Revision;
 
 class RevisionRepository implements Contract
 {
-    public function directory()
-    {
-        return config('statamic.revisions.path');
-    }
-
     public function make(): RevisionContract
     {
         return new Revision;
@@ -29,7 +24,7 @@ class RevisionRepository implements Contract
     {
         $key = $this->cleanKey($key);
 
-        $revision = RevisionModel::where('key', $key)->first();
+        $revision = RevisionModel::where('key', $key)->get();
 
         if (! $revision) {
             return null;
