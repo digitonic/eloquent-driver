@@ -65,7 +65,7 @@ class Entry extends FileEntry
 
     public function lastModified()
     {
-        return $this->model->updated_at;
+        return optional($this->model)->updated_at;
     }
 
     public function origin($origin = null)
@@ -80,7 +80,7 @@ class Entry extends FileEntry
             return $this->origin;
         }
 
-        if (! $this->model->origin) {
+        if (! optional($this->model)->origin) {
             return null;
         }
 
