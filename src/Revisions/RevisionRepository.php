@@ -38,7 +38,7 @@ class RevisionRepository implements Contract
         $key = $this->cleanKey($key);
 
         $revision = RevisionModel::where('key', $key)
-            ->orderBy('date', 'desc')
+            ->orderBy('id', 'desc')
             ->first();
 
         if (! $revision) {
